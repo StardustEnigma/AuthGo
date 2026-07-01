@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"errors"
 	"time"
 
 	"github.com/StardustEnigma/AuthGo/models"
@@ -37,4 +38,27 @@ func GenerateToken(user models.User)(string,error){
 		return "",err
 	}
 	return tokenString,nil
+}
+
+func ValidateTokens(tokenString string)(*Claims,error){
+
+	claims := &Claims{}
+
+	token,err := jwt.ParseWithClaims(
+		tokenString,
+		claims,
+		func(token *jwt.Token) (interface {}, error) {
+			return mySecretKey,nil
+		},
+	)
+	if err != nil{
+		return nil,err
+	}
+	if _, ok :=token.Method.(*jwt.SigningMethodHMAC); !ok{
+		return nil, errors.New("Unexpected Signing Method")
+	}
+	if !token.Valid{
+		return  nil, errors.New("Invalid token")
+	}
+	return claims,nil
 }
