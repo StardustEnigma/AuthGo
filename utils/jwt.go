@@ -11,6 +11,7 @@ import (
 type Claims struct {
 	UserId int `json:"user_id"`
 	Username string `json:"username"`
+	Role string `json:"role"`
 	jwt.RegisteredClaims
 }
 var mySecretKey = []byte("my-Secret-Key")
@@ -18,6 +19,7 @@ func GenerateToken(user models.User)(string,error){
 	claims := Claims{
 		Username: user.UserName,
 		UserId: user.UserId,
+		Role: string(user.Role),
 		RegisteredClaims: jwt.RegisteredClaims{
 			IssuedAt: jwt.NewNumericDate(
 				time.Now(),
