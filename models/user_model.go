@@ -17,7 +17,7 @@ type User struct {
 	Role         UserRole    `json:"role"`     
     IsActive     bool      `json:"is_active"`
     IsVerified   bool      `json:"is_verified"`
-
+	IsSuspended bool `json:"is_suspended"`
     LastLoginAt  time.Time `json:"last_login_at"`
     UpdatedAt    time.Time `json:"updated_at"`
     DeletedAt    *time.Time `json:"deleted_at,omitempty"`
