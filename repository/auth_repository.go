@@ -2,22 +2,31 @@ package repository
 
 import (
 	"context"
+	"database/sql"
 
 	"github.com/StardustEnigma/AuthGo/db"
 	"github.com/StardustEnigma/AuthGo/models"
 )
+type Repository struct{
+	DB *sql.DB
+}
+type AuthRepository interface{
+	CreateUser(ctx context.Context,user models.User)(models.User,error)
+}
 
-func CreateUser(ctx context.Context,user models.User)(models.User,error){
+func(r *Repository) CreateUser(ctx context.Context,user models.User)(models.User,error){
 	query := `INSERT INTO users
 				(username,password,created_at)
-				VALUES $1,$2,$3
+				VALUES ($1,$2,$3)
 				RETURNING user_id,username,password,created_at`
 
 	var savedUser models.User
-	err := db.Db.QueryRowContext(
+	err := r.DB.QueryRowContext(
 		ctx,
 		query,
-		user,
+		user.UserName,
+		user.Password,
+		user.CreatedAt,
 	).Scan(
 		&savedUser.UserId,
 		&savedUser.UserName,

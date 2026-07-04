@@ -79,3 +79,7 @@ func BanUser(ctx context.Context,userId int)error{
 	}
 	return nil
 }
+
+// func ChangeUserRoles(ctx context.Context,userId int)error{
+	
+// }

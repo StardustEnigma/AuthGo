@@ -11,21 +11,26 @@ import (
 	"github.com/StardustEnigma/AuthGo/utils"
 	"golang.org/x/crypto/bcrypt"
 )
-
-func CreateUser(ctx context.Context,request dto.Register)(models.User,error) {
+type AuthService struct{
+	Repo repository.AuthRepository
+}
+func(s *AuthService) CreateUser(ctx context.Context,request dto.Register)(models.User,error) {
 		var user models.User
+
 		user.UserName=request.Username
-		passwordHash,err :=bcrypt.GenerateFromPassword([]byte(request.Password),bcrypt.DefaultCost)
-		user.Password=string(passwordHash)
+		hashedPassword,err := bcrypt.GenerateFromPassword([]byte(request.Password),bcrypt.DefaultCost)
 		if err != nil {
 			return models.User{},err
 		}
+		user.Password=string(hashedPassword)
 		user.CreatedAt=time.Now().UTC()
-		newUser,err := repository.CreateUser(ctx,user)
+		user.Role=models.Users
+		savedUser,err := s.Repo.CreateUser(ctx,user)
 		if err != nil {
-			return models.User{}, err
-		}
-		return newUser,nil
+			return models.User{},err
+		} 
+		return savedUser,nil
+
 }
 
 func LoginUser(ctx context.Context, request dto.LoginRequest)(string,error){
