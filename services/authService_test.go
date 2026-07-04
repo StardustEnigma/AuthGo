@@ -22,6 +22,10 @@ func (m *MockAuthRepository) CreateUser(ctx context.Context,user models.User)(mo
 	return user,nil
 }
 
+func (m *MockAuthRepository) LoginUser(ctx context.Context,username string)(models.User,error){
+
+}
+
 func TestCreateUser(t *testing.T){
 	tests := []struct {
 		name string

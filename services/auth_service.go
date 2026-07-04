@@ -13,6 +13,7 @@ import (
 )
 type AuthService interface{
 	CreateUser(ctx context.Context, request dto.Register) (models.User, error)
+	LoginUser(ctx context.Context, request dto.LoginRequest)(string,error)
 }
 type authService struct{
 	Repo repository.AuthRepository
@@ -42,24 +43,26 @@ func(s *authService) CreateUser(ctx context.Context,request dto.Register)(models
 
 }
 
-func LoginUser(ctx context.Context, request dto.LoginRequest)(string,error){
-	user,err := repository.LoginUser(ctx,request.Username)
-	if err!= nil {
+func (s *authService) LoginUser(ctx context.Context,request dto.LoginRequest)(string,error){
+	username := request.Username
+	user,err :=s.Repo.LoginUser(ctx,username)
+	if err!= nil{
 		return "",err
 	}
-	if !user.IsActive {
-		return "",errors.New("User not active ")
+	if user.IsSuspended || !user.IsActive {
+		return "",errors.New("Plz contact admin for login")
 	}
-	err = bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(request.Password))
-	if err != nil {
-		return "",errors.New("Invalid Password")
+	ok := bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(request.Password))
+	if ok != nil{
+		return "",errors.New("incorrect password")
 	}
 	token,err := utils.GenerateToken(user)
-	if err != nil {
+	if err!= nil {
 		return "",err
 	}
 	return token,nil
 }
+
 
 // AuthService handles authentication and identity management.
 //

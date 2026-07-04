@@ -12,6 +12,7 @@ type Repository struct{
 }
 type AuthRepository interface{
 	CreateUser(ctx context.Context,user models.User)(models.User,error)
+	LoginUser(ctx context.Context,username string)(models.User,error)
 }
 
 func(r *Repository) CreateUser(ctx context.Context,user models.User)(models.User,error){
@@ -39,7 +40,7 @@ func(r *Repository) CreateUser(ctx context.Context,user models.User)(models.User
 	return savedUser,nil
 }
 
-func LoginUser(ctx context.Context, username string)(models.User,error){
+func(r *Repository) LoginUser(ctx context.Context, username string)(models.User,error){
 	query := `SELECT 
 				user_id,
 				password,

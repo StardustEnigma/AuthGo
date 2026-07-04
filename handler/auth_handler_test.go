@@ -31,6 +31,11 @@ func (m *MockAuthService) CreateUser(ctx context.Context,request dto.Register)(m
 	},nil
 }
 
+
+func (m *MockAuthService) LoginUser(ctx context.Context,request dto.LoginRequest)(string,error){
+
+}
+
 func TestRegisterUser(t *testing.T){
 	tests := []struct {
 		name string
