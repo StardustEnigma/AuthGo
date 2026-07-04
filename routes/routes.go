@@ -11,9 +11,9 @@ import (
 func Routes() *chi.Mux{
 	r := chi.NewRouter()
 	repo := &repository.Repository{DB :db.Db}
-	authService := &services.AuthService{Repo:repo}
+	authService := services.NewAuthService(repo)
 
-	handler := &handler.Handler{AuthService: *authService}
+	handler := &handler.Handler{AuthService: authService}
 	r.Post("/register",handler.RegisterUser)
 	return r
 }

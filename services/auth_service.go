@@ -11,10 +11,19 @@ import (
 	"github.com/StardustEnigma/AuthGo/utils"
 	"golang.org/x/crypto/bcrypt"
 )
-type AuthService struct{
+type AuthService interface{
+	CreateUser(ctx context.Context, request dto.Register) (models.User, error)
+}
+type authService struct{
 	Repo repository.AuthRepository
 }
-func(s *AuthService) CreateUser(ctx context.Context,request dto.Register)(models.User,error) {
+func NewAuthService(repo repository.AuthRepository)AuthService{
+	return &authService{
+		Repo: repo,
+	}
+}
+
+func(s *authService) CreateUser(ctx context.Context,request dto.Register)(models.User,error) {
 		var user models.User
 
 		user.UserName=request.Username
