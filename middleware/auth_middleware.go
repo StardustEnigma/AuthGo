@@ -8,7 +8,7 @@ import (
 	"github.com/StardustEnigma/AuthGo/utils"
 )
 type contextKey string
-const userIdKey contextKey = "userId"
+const UserIdKey contextKey = "userId"
 
 func AuthMiddleWare(next http.Handler)http.Handler{
 	return http.HandlerFunc(
@@ -36,7 +36,7 @@ func AuthMiddleWare(next http.Handler)http.Handler{
 			}
 			ctx := context.WithValue(
 				r.Context(),
-				userIdKey,
+				UserIdKey,
 				claims.UserId,
 			)
 			r=r.WithContext(

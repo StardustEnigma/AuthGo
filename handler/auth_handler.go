@@ -3,7 +3,9 @@ package handler
 import (
 	"encoding/json"
 	"net/http"
+
 	"github.com/StardustEnigma/AuthGo/dto"
+	"github.com/StardustEnigma/AuthGo/middleware"
 	"github.com/StardustEnigma/AuthGo/services"
 )
 type Handler struct{
@@ -39,6 +41,17 @@ func (h *Handler)LoginUser(w http.ResponseWriter, r *http.Request){
 		Token string `json:"token"`
 	}{
 		Token: token,
+	}
+	json.NewEncoder(w).Encode(response)
+}
+
+func (h *Handler)GetMe(w http.ResponseWriter,r *http.Request){
+	userId := r.Context().Value(middleware.UserIdKey).(int)
+	w.Header().Set("Content-Type","application/json")
+
+	response := map[string]interface{}{
+		"userId" : userId,
+		"message" : "You are authenticated",
 	}
 	json.NewEncoder(w).Encode(response)
 }
