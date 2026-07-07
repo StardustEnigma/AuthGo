@@ -77,3 +77,4 @@ func (s *authService) LoginUser(ctx context.Context,request dto.LoginRequest)(st
 // - Password reset functionality
 // - Account activation checks
 // - Authentication-related business rules
+

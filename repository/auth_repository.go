@@ -63,3 +63,4 @@ func(r *Repository) LoginUser(ctx context.Context, username string)(models.User,
 	}
 	return user,nil
 }
+
