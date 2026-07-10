@@ -8,7 +8,7 @@ import (
 	"github.com/StardustEnigma/AuthGo/models"
 	"github.com/StardustEnigma/AuthGo/repository"
 	"golang.org/x/crypto/bcrypt"
-	"golang.org/x/tools/go/analysis/passes/nilfunc"
+
 )
 
 type UserService interface{
@@ -21,9 +21,9 @@ type userService struct{
 	Repo repository.UserRepository
 }
 
-func NewUserService(repo repository.Repository)UserService{
+func NewUserService(repo repository.UserRepository)UserService{
 	return &userService{
-		Repo: &repo,
+		Repo: repo,
 	}
 }
 
@@ -69,7 +69,15 @@ func(r *userService) ChangeUserPassword(ctx context.Context,userId int,request d
 
  ok := bcrypt.CompareHashAndPassword([]byte(user.Password),[]byte(request.OldPassword))
  if ok != nil {
-	return "",errors.New("Invalid Old password")
-
+	return "",errors.New("Invalid Old password")	
 }
+newHashedPassword,err := bcrypt.GenerateFromPassword([]byte(request.NewPassword),bcrypt.DefaultCost)
+if err != nil {
+	return "",err
+}
+response := r.Repo.UpdatePassword(ctx,userId,string(newHashedPassword))
+if response !=nil {
+	return "",err
+}
+return "updated Password suceesfully",nil
 }

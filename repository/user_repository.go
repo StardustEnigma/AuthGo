@@ -10,7 +10,8 @@ import (
 type UserRepository interface{
 	GetUserById(ctx context.Context,userId int)(models.User,error)
 	GetUserByUsername(ctx context.Context,username string)(models.User,error)
-	UpdateUsername(ctx context.Context,userId int,oldUsername string)(error)
+	UpdateUsername(ctx context.Context,userId int,newUsername string)(error)
+	UpdatePassword(ctx context.Context,userId int,newPassword string)(error)
 }
 
 func (r *Repository) GetUserById(ctx context.Context,userId int)(models.User,error){
@@ -88,4 +89,28 @@ func(r *Repository)UpdateUsername(ctx context.Context,userId int,newUsername str
 		return errors.New("User does not exists")
 	}
 	return nil
+}
+
+func(r * Repository) UpdatePassword(ctx context.Context,userId int, newPassword string)(error){
+	query := `UPDATE users
+				SET password= $2
+				WHERE user_id = $1`
+	
+	response,err := r.DB.ExecContext(
+		ctx,
+		query,
+		userId,
+		newPassword,
+	)
+	if err != nil {
+		return err
+	}
+	rowsaffected,err := response.RowsAffected()
+	if err != nil {
+		return err
+	}
+	if rowsaffected==0{
+		return errors.New("No user found")
+	}
+	return  nil
 }
